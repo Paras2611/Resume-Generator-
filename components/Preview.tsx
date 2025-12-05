@@ -108,7 +108,7 @@ const ModernTemplate: React.FC<{ data: ResumeData; themeColor: string }> = ({ da
   );
 
   return (
-    <div className="w-full h-full bg-white flex flex-row">
+    <div className="w-full min-h-full bg-white flex flex-row print:h-auto">
       {/* Sidebar */}
       <div className="w-1/3 bg-slate-900 text-white p-6 flex flex-col gap-6">
         <div className="space-y-2">
@@ -236,7 +236,7 @@ const ClassicTemplate: React.FC<{ data: ResumeData; themeColor: string }> = ({ d
   );
 
   return (
-    <div className="w-full h-full bg-white p-8 md:p-12 text-gray-800 font-serif">
+    <div className="w-full min-h-full bg-white p-8 md:p-12 text-gray-800 font-serif print:h-auto">
       <header className="border-b-2 pb-6 mb-6 text-center" style={{ borderColor: themeColor }}>
         <h1 className="text-3xl font-bold uppercase tracking-widest mb-2" style={{ color: themeColor }}>{data.personalInfo.fullName}</h1>
         <p className="text-lg italic text-gray-600 mb-3">{data.personalInfo.jobTitle}</p>
@@ -365,7 +365,7 @@ const MinimalTemplate: React.FC<{ data: ResumeData; themeColor: string }> = ({ d
   );
 
   return (
-    <div className="w-full h-full bg-white p-10 text-gray-900 font-sans">
+    <div className="w-full min-h-full bg-white p-10 text-gray-900 font-sans print:h-auto">
       <header className="mb-8">
         <h1 className="text-4xl font-light mb-1" style={{ color: themeColor }}>{data.personalInfo.fullName}</h1>
         <div className="text-xl font-light text-gray-500 mb-4">{data.personalInfo.jobTitle}</div>
@@ -496,7 +496,7 @@ const ElegantTemplate: React.FC<{ data: ResumeData; themeColor: string }> = ({ d
   );
 
   return (
-    <div className="w-full h-full bg-white flex flex-col font-sans text-gray-800">
+    <div className="w-full min-h-full bg-white flex flex-col font-sans text-gray-800 print:h-auto">
       {/* Header */}
       <header className="px-8 pt-10 pb-6 text-center border-b border-gray-100">
         <h1 className="text-4xl font-bold font-serif mb-2" style={{ color: themeColor }}>{data.personalInfo.fullName}</h1>
@@ -567,7 +567,7 @@ const ElegantTemplate: React.FC<{ data: ResumeData; themeColor: string }> = ({ d
 
 export const Preview: React.FC<PreviewProps> = ({ data, template, themeColor }) => {
   return (
-    <div id="resume-preview" className="w-full h-full bg-white shadow-2xl print:shadow-none overflow-hidden text-left origin-top transform-gpu">
+    <div id="resume-preview" className="w-full min-h-full bg-white shadow-2xl print:shadow-none overflow-hidden text-left origin-top transform-gpu print:overflow-visible print:h-auto">
       {template === TemplateType.MODERN && <ModernTemplate data={data} themeColor={themeColor} />}
       {template === TemplateType.CLASSIC && <ClassicTemplate data={data} themeColor={themeColor} />}
       {template === TemplateType.MINIMAL && <MinimalTemplate data={data} themeColor={themeColor} />}
