@@ -4,7 +4,7 @@ import { Editor } from './components/Editor';
 import { Preview } from './components/Preview';
 import { ResumeData, TemplateType } from './types';
 import { INITIAL_DATA } from './constants';
-import { Download, FileText, Monitor, Palette, X } from 'lucide-react';
+import { Download, FileText, Monitor, Palette, X, Printer, Layout, Settings2 } from 'lucide-react';
 
 const App: React.FC = () => {
   // Robust Data Initialization
@@ -127,7 +127,7 @@ const App: React.FC = () => {
           <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-lg shrink-0 transition-colors" style={{ backgroundColor: themeColor }}>R</div>
           <h1 className="text-xl font-bold tracking-tight text-gray-800 hidden sm:block">ResuCraft</h1>
 
-          {/* Mobile Template Selector - Removed appearance-none to show native arrow */}
+          {/* Mobile Template Selector - Native select for reliability */}
           <div className="md:hidden relative ml-2">
             <select 
               value={template} 
@@ -217,7 +217,7 @@ const App: React.FC = () => {
           <Editor data={data} onChange={setData} />
         </div>
 
-        {/* Preview Pane Container */}
+        {/* Preview Pane Container (Main View) */}
         <div className={`w-full md:flex-1 bg-gray-200/50 h-full overflow-y-auto flex items-start justify-center p-4 md:p-8 transition-transform duration-300 absolute md:relative ${activeTab === 'preview' ? 'translate-x-0' : 'translate-x-full md:translate-x-0'} print:absolute print:inset-0 print:w-full print:h-auto print:min-h-screen print:bg-white print:z-50 print:overflow-visible print:p-0 print:block`}>
            
            {/* The actual Page */}
@@ -265,75 +265,100 @@ const App: React.FC = () => {
 
       </main>
 
-      {/* Export Options Modal */}
+      {/* Full Screen Print Preview Modal */}
       {showExportModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm print:hidden p-4">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-sm overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-            <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-              <h3 className="font-bold text-gray-800">Export Options</h3>
-              <button 
-                onClick={() => setShowExportModal(false)}
-                className="p-1 rounded hover:bg-gray-200 text-gray-500 transition-colors"
-              >
-                <X size={18} />
+        <div className="fixed inset-0 z-50 flex flex-col md:flex-row bg-slate-900/95 backdrop-blur-sm print:hidden animate-in fade-in duration-200">
+          
+          {/* Header (Mobile Only) */}
+          <div className="md:hidden flex items-center justify-between p-4 border-b border-white/10 bg-slate-900">
+            <h3 className="text-white font-bold flex items-center gap-2">
+              <Printer size={18} /> Print Preview
+            </h3>
+            <button onClick={() => setShowExportModal(false)} className="text-gray-400 hover:text-white">
+              <X size={20} />
+            </button>
+          </div>
+
+          {/* Left: Preview Area */}
+          <div className="flex-1 overflow-hidden relative flex items-center justify-center p-4 md:p-10 bg-slate-900/50">
+            <div className="relative shadow-2xl transition-all duration-300 ease-out origin-center transform scale-[0.45] sm:scale-[0.55] md:scale-[0.6] lg:scale-[0.7] xl:scale-[0.8]">
+               <div style={getPageDimensions()} className="bg-white">
+                  <Preview data={data} template={template} themeColor={themeColor} />
+               </div>
+            </div>
+          </div>
+
+          {/* Right: Settings Sidebar */}
+          <div className="w-full md:w-80 bg-white shadow-2xl flex flex-col z-10 shrink-0">
+            <div className="hidden md:flex items-center justify-between p-6 border-b border-gray-100">
+              <h3 className="font-bold text-lg text-gray-800 flex items-center gap-2">
+                <Settings2 size={20} /> Print Settings
+              </h3>
+              <button onClick={() => setShowExportModal(false)} className="text-gray-400 hover:text-gray-600 transition-colors">
+                <X size={24} />
               </button>
             </div>
-            
-            <div className="p-6 space-y-6">
-              
+
+            <div className="p-6 flex-1 space-y-8 overflow-y-auto">
+              {/* Paper Size */}
               <div className="space-y-3">
-                <label className="text-sm font-semibold text-gray-700 block">Paper Size</label>
+                <label className="text-sm font-bold text-gray-900 uppercase tracking-wide flex items-center gap-2">
+                  <FileText size={16} /> Paper Size
+                </label>
                 <div className="grid grid-cols-2 gap-3">
                   <button 
                     onClick={() => setPrintSettings(s => ({ ...s, size: 'a4' }))}
-                    className={`px-4 py-3 rounded-lg border text-sm font-medium transition-all ${printSettings.size === 'a4' ? 'bg-blue-50 border-blue-500 text-blue-700 ring-1 ring-blue-500' : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300'}`}
+                    className={`flex flex-col items-center justify-center p-3 rounded-xl border-2 transition-all ${printSettings.size === 'a4' ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-gray-100 bg-gray-50 text-gray-600 hover:border-gray-200'}`}
                   >
-                    A4
-                    <span className="block text-[10px] opacity-70 font-normal mt-0.5">210 x 297 mm</span>
+                    <span className="font-bold text-lg">A4</span>
+                    <span className="text-[10px] opacity-60">210 x 297 mm</span>
                   </button>
                   <button 
                     onClick={() => setPrintSettings(s => ({ ...s, size: 'letter' }))}
-                    className={`px-4 py-3 rounded-lg border text-sm font-medium transition-all ${printSettings.size === 'letter' ? 'bg-blue-50 border-blue-500 text-blue-700 ring-1 ring-blue-500' : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300'}`}
+                    className={`flex flex-col items-center justify-center p-3 rounded-xl border-2 transition-all ${printSettings.size === 'letter' ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-gray-100 bg-gray-50 text-gray-600 hover:border-gray-200'}`}
                   >
-                    Letter
-                    <span className="block text-[10px] opacity-70 font-normal mt-0.5">8.5 x 11 in</span>
+                    <span className="font-bold text-lg">Letter</span>
+                    <span className="text-[10px] opacity-60">8.5 x 11 in</span>
                   </button>
                 </div>
               </div>
 
+              {/* Orientation */}
               <div className="space-y-3">
-                <label className="text-sm font-semibold text-gray-700 block">Orientation</label>
+                <label className="text-sm font-bold text-gray-900 uppercase tracking-wide flex items-center gap-2">
+                  <Layout size={16} /> Orientation
+                </label>
                 <div className="grid grid-cols-2 gap-3">
                   <button 
                     onClick={() => setPrintSettings(s => ({ ...s, orientation: 'portrait' }))}
-                    className={`px-4 py-3 rounded-lg border text-sm font-medium transition-all ${printSettings.orientation === 'portrait' ? 'bg-blue-50 border-blue-500 text-blue-700 ring-1 ring-blue-500' : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300'}`}
+                    className={`flex flex-col items-center justify-center p-3 rounded-xl border-2 transition-all ${printSettings.orientation === 'portrait' ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-gray-100 bg-gray-50 text-gray-600 hover:border-gray-200'}`}
                   >
-                    Portrait
+                    <div className="w-6 h-8 border-2 border-current rounded-sm mb-1"></div>
+                    <span className="text-xs font-semibold">Portrait</span>
                   </button>
                   <button 
                     onClick={() => setPrintSettings(s => ({ ...s, orientation: 'landscape' }))}
-                    className={`px-4 py-3 rounded-lg border text-sm font-medium transition-all ${printSettings.orientation === 'landscape' ? 'bg-blue-50 border-blue-500 text-blue-700 ring-1 ring-blue-500' : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300'}`}
+                    className={`flex flex-col items-center justify-center p-3 rounded-xl border-2 transition-all ${printSettings.orientation === 'landscape' ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-gray-100 bg-gray-50 text-gray-600 hover:border-gray-200'}`}
                   >
-                    Landscape
+                    <div className="w-8 h-6 border-2 border-current rounded-sm mb-1"></div>
+                    <span className="text-xs font-semibold">Landscape</span>
                   </button>
                 </div>
+              </div>
+              
+              <div className="p-4 bg-blue-50 rounded-lg text-xs text-blue-800 leading-relaxed">
+                <p><strong>Tip:</strong> In the browser print dialog, ensure "Background graphics" is checked for colors to appear correctly.</p>
               </div>
 
             </div>
 
-            <div className="p-4 border-t border-gray-100 bg-gray-50/50 flex gap-3">
-              <button 
-                onClick={() => setShowExportModal(false)}
-                className="flex-1 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:text-gray-800 transition-colors"
-              >
-                Cancel
-              </button>
+            <div className="p-6 border-t border-gray-100 bg-gray-50">
               <button 
                 onClick={handlePrintConfirm}
-                className="flex-1 px-4 py-2 text-sm font-medium text-white rounded-lg shadow-sm hover:brightness-110 transition-all flex items-center justify-center gap-2"
+                className="w-full py-4 text-white font-bold text-lg rounded-xl shadow-lg hover:brightness-110 hover:shadow-xl transition-all flex items-center justify-center gap-3 active:scale-[0.98]"
                 style={{ backgroundColor: themeColor }}
               >
-                <Download size={16} />
+                <Printer size={24} />
                 Print / Save PDF
               </button>
             </div>
