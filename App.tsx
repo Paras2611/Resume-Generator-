@@ -7,14 +7,47 @@ import { INITIAL_DATA } from './constants';
 import { Download, FileText, Monitor, Palette, X } from 'lucide-react';
 
 const App: React.FC = () => {
+  // Robust Data Initialization
   const [data, setData] = useState<ResumeData>(() => {
-    const saved = localStorage.getItem('resumeData');
-    return saved ? JSON.parse(saved) : INITIAL_DATA;
+    try {
+      const saved = localStorage.getItem('resumeData');
+      if (!saved) return INITIAL_DATA;
+      
+      const parsed = JSON.parse(saved);
+      
+      // Deep merge with INITIAL_DATA to ensure schema compatibility
+      // This fixes issues where old saved data is missing new fields (like experienceLevel)
+      return {
+        ...INITIAL_DATA,
+        ...parsed,
+        personalInfo: {
+          ...INITIAL_DATA.personalInfo,
+          ...(parsed.personalInfo || {})
+        },
+        // Ensure arrays exist, falling back to empty arrays if undefined in saved data
+        experience: parsed.experience || [],
+        education: parsed.education || [],
+        skills: parsed.skills || [],
+        projects: parsed.projects || []
+      };
+    } catch (error) {
+      console.error("Failed to load resume data from storage:", error);
+      // If data is corrupt, fall back to initial data to prevent app crash
+      return INITIAL_DATA;
+    }
   });
+
   const [template, setTemplate] = useState<TemplateType>(TemplateType.MODERN);
+  
+  // Safe Theme Color Initialization
   const [themeColor, setThemeColor] = useState<string>(() => {
-    return localStorage.getItem('themeColor') || '#2563eb';
+    try {
+      return localStorage.getItem('themeColor') || '#2563eb';
+    } catch {
+      return '#2563eb';
+    }
   });
+
   const [activeTab, setActiveTab] = useState<'editor' | 'preview'>('editor');
   
   // Print/Export State
@@ -24,14 +57,22 @@ const App: React.FC = () => {
     orientation: 'portrait' as 'portrait' | 'landscape'
   });
 
-  // Persist data
+  // Persist data with error handling
   useEffect(() => {
-    localStorage.setItem('resumeData', JSON.stringify(data));
+    try {
+      localStorage.setItem('resumeData', JSON.stringify(data));
+    } catch (e) {
+      console.error("Failed to save resume data", e);
+    }
   }, [data]);
 
   // Persist theme color
   useEffect(() => {
-    localStorage.setItem('themeColor', themeColor);
+    try {
+      localStorage.setItem('themeColor', themeColor);
+    } catch (e) {
+      console.error("Failed to save theme color", e);
+    }
   }, [themeColor]);
 
   const handleExportClick = () => {
@@ -46,9 +87,11 @@ const App: React.FC = () => {
   };
 
   const handleReset = () => {
-    if(confirm("Are you sure you want to reset all data to default?")) {
+    if(confirm("Are you sure you want to reset all data to default? This cannot be undone.")) {
         setData(INITIAL_DATA);
         setThemeColor('#2563eb');
+        localStorage.removeItem('resumeData');
+        localStorage.removeItem('themeColor');
     }
   }
 
