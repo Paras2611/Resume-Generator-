@@ -106,7 +106,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-gray-100 font-sans text-gray-900">
+    <div className="flex flex-col h-screen overflow-hidden bg-gray-100 font-sans text-gray-900 print:h-auto print:overflow-visible">
       {/* Dynamic Print Styles */}
       <style>{`
         @media print {
@@ -117,7 +117,10 @@ const App: React.FC = () => {
           body {
             print-color-adjust: exact;
             -webkit-print-color-adjust: exact;
+            background-color: white;
           }
+          /* Ensure no other scrollbars appear */
+          ::-webkit-scrollbar { display: none; }
         }
       `}</style>
 
@@ -210,7 +213,7 @@ const App: React.FC = () => {
       </header>
 
       {/* Main Layout */}
-      <main className="flex-1 flex overflow-hidden relative">
+      <main className="flex-1 flex overflow-hidden relative print:overflow-visible print:h-auto print:block">
         
         {/* Editor Pane */}
         <div className={`w-full md:w-1/2 lg:w-[450px] xl:w-[500px] bg-white h-full flex flex-col z-10 transition-transform duration-300 absolute md:relative ${activeTab === 'editor' ? 'translate-x-0' : '-translate-x-full md:translate-x-0'} print:hidden shadow-xl md:shadow-none`}>
@@ -218,11 +221,17 @@ const App: React.FC = () => {
         </div>
 
         {/* Preview Pane Container (Main View) */}
-        <div className={`w-full md:flex-1 bg-gray-200/50 h-full overflow-y-auto flex items-start justify-center p-4 md:p-8 transition-transform duration-300 absolute md:relative ${activeTab === 'preview' ? 'translate-x-0' : 'translate-x-full md:translate-x-0'} print:absolute print:inset-0 print:w-full print:h-auto print:min-h-screen print:bg-white print:z-50 print:overflow-visible print:p-0 print:block`}>
+        {/* 
+            Critical Fix for Printing: 
+            - Removed print:absolute which was causing clipping in some contexts.
+            - Added print:w-full print:h-auto print:overflow-visible to ensure full document flow.
+            - Used print:block to ensure visibility.
+        */}
+        <div className={`w-full md:flex-1 bg-gray-200/50 h-full overflow-y-auto flex items-start justify-center p-4 md:p-8 transition-transform duration-300 absolute md:relative ${activeTab === 'preview' ? 'translate-x-0' : 'translate-x-full md:translate-x-0'} print:static print:w-full print:h-auto print:overflow-visible print:bg-white print:p-0 print:block`}>
            
            {/* The actual Page */}
            <div 
-             className="bg-white shadow-xl print:shadow-none origin-top transform md:scale-[0.6] lg:scale-[0.75] xl:scale-[0.85] 2xl:scale-100 print:transform-none transition-all duration-200 ease-out"
+             className="bg-white shadow-xl print:shadow-none origin-top transform md:scale-[0.6] lg:scale-[0.75] xl:scale-[0.85] 2xl:scale-100 print:transform-none transition-all duration-200 ease-out print:mx-auto"
              style={getPageDimensions()}
            >
               <Preview data={data} template={template} themeColor={themeColor} />
