@@ -1,10 +1,10 @@
+
 import React, { useState, useEffect } from 'react';
 import { Editor } from './components/Editor';
 import { Preview } from './components/Preview';
 import { ResumeData, TemplateType } from './types';
 import { INITIAL_DATA } from './constants';
-// REMOVED 'Layout', ADDED 'ChevronDown' to imports to fix error and improve UI
-import { Download, FileText, Monitor, Palette, ChevronDown, X } from 'lucide-react';
+import { Download, FileText, Monitor, Palette, X } from 'lucide-react';
 
 const App: React.FC = () => {
   const [data, setData] = useState<ResumeData>(() => {
@@ -93,10 +93,6 @@ const App: React.FC = () => {
               <option value={TemplateType.MINIMAL}>Minimal</option>
               <option value={TemplateType.ELEGANT}>Elegant</option>
             </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
-               {/* Fixed: Used ChevronDown instead of Layout for better UI */}
-               <ChevronDown size={14} />
-            </div>
           </div>
         </div>
 
