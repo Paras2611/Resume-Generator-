@@ -1,10 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { Editor } from './components/Editor';
 import { Preview } from './components/Preview';
 import { ResumeData, TemplateType } from './types';
 import { INITIAL_DATA } from './constants';
-import { Download, Layout, FileText, Monitor, Palette, X, ChevronDown } from 'lucide-react';
+import { Download, Layout, FileText, Monitor, Palette, X } from 'lucide-react';
 
 const App: React.FC = () => {
   const [data, setData] = useState<ResumeData>(() => {
