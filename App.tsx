@@ -3,7 +3,8 @@ import { Editor } from './components/Editor';
 import { Preview } from './components/Preview';
 import { ResumeData, TemplateType } from './types';
 import { INITIAL_DATA } from './constants';
-import { Download, Layout, FileText, Monitor, Palette, X } from 'lucide-react';
+// REMOVED 'Layout', ADDED 'ChevronDown' to imports to fix error and improve UI
+import { Download, FileText, Monitor, Palette, ChevronDown, X } from 'lucide-react';
 
 const App: React.FC = () => {
   const [data, setData] = useState<ResumeData>(() => {
@@ -39,7 +40,6 @@ const App: React.FC = () => {
 
   const handlePrintConfirm = () => {
     setShowExportModal(false);
-    // Small delay to ensure modal is closed and styles are applied before print dialog
     setTimeout(() => {
       window.print();
     }, 100);
@@ -52,13 +52,10 @@ const App: React.FC = () => {
     }
   }
 
-  // Calculate page dimensions for screen preview
   const getPageDimensions = () => {
     const isPortrait = printSettings.orientation === 'portrait';
-    // Dimensions in mm
     const a4 = { w: 210, h: 297 };
     const letter = { w: 215.9, h: 279.4 };
-    
     const selectedDim = printSettings.size === 'a4' ? a4 : letter;
     
     return {
@@ -69,7 +66,6 @@ const App: React.FC = () => {
 
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-gray-100 font-sans text-gray-900">
-      {/* Dynamic Print Styles */}
       <style>{`
         @media print {
           @page {
@@ -98,7 +94,8 @@ const App: React.FC = () => {
               <option value={TemplateType.ELEGANT}>Elegant</option>
             </select>
             <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
-               <Layout size={14} />
+               {/* Fixed: Used ChevronDown instead of Layout for better UI */}
+               <ChevronDown size={14} />
             </div>
           </div>
         </div>
