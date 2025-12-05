@@ -16,7 +16,6 @@ const App: React.FC = () => {
       const parsed = JSON.parse(saved);
       
       // Deep merge with INITIAL_DATA to ensure schema compatibility
-      // This fixes issues where old saved data is missing new fields (like experienceLevel)
       return {
         ...INITIAL_DATA,
         ...parsed,
@@ -24,7 +23,6 @@ const App: React.FC = () => {
           ...INITIAL_DATA.personalInfo,
           ...(parsed.personalInfo || {})
         },
-        // Ensure arrays exist, falling back to empty arrays if undefined in saved data
         experience: parsed.experience || [],
         education: parsed.education || [],
         skills: parsed.skills || [],
@@ -32,7 +30,6 @@ const App: React.FC = () => {
       };
     } catch (error) {
       console.error("Failed to load resume data from storage:", error);
-      // If data is corrupt, fall back to initial data to prevent app crash
       return INITIAL_DATA;
     }
   });
@@ -57,7 +54,7 @@ const App: React.FC = () => {
     orientation: 'portrait' as 'portrait' | 'landscape'
   });
 
-  // Persist data with error handling
+  // Persist data
   useEffect(() => {
     try {
       localStorage.setItem('resumeData', JSON.stringify(data));
@@ -81,6 +78,7 @@ const App: React.FC = () => {
 
   const handlePrintConfirm = () => {
     setShowExportModal(false);
+    // Small timeout to allow modal to close before print dialog freezes UI
     setTimeout(() => {
       window.print();
     }, 100);
@@ -109,11 +107,16 @@ const App: React.FC = () => {
 
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-gray-100 font-sans text-gray-900">
+      {/* Dynamic Print Styles */}
       <style>{`
         @media print {
           @page {
             size: ${printSettings.size} ${printSettings.orientation};
             margin: 0;
+          }
+          body {
+            print-color-adjust: exact;
+            -webkit-print-color-adjust: exact;
           }
         }
       `}</style>
@@ -124,12 +127,12 @@ const App: React.FC = () => {
           <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-lg shrink-0 transition-colors" style={{ backgroundColor: themeColor }}>R</div>
           <h1 className="text-xl font-bold tracking-tight text-gray-800 hidden sm:block">ResuCraft</h1>
 
-          {/* Mobile Template Selector */}
+          {/* Mobile Template Selector - Removed appearance-none to show native arrow */}
           <div className="md:hidden relative ml-2">
             <select 
               value={template} 
               onChange={(e) => setTemplate(e.target.value as TemplateType)}
-              className="appearance-none bg-gray-50 border border-gray-200 text-gray-700 py-1.5 pl-3 pr-8 rounded-md text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="bg-gray-50 border border-gray-200 text-gray-700 py-1.5 pl-3 pr-8 rounded-md text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value={TemplateType.MODERN}>Modern</option>
               <option value={TemplateType.CLASSIC}>Classic</option>
@@ -215,7 +218,7 @@ const App: React.FC = () => {
         </div>
 
         {/* Preview Pane Container */}
-        <div className={`w-full md:flex-1 bg-gray-200/50 h-full overflow-y-auto flex items-start justify-center p-4 md:p-8 transition-transform duration-300 absolute md:relative ${activeTab === 'preview' ? 'translate-x-0' : 'translate-x-full md:translate-x-0'} print:w-full print:h-full print:p-0 print:bg-white print:absolute print:z-50 print:top-0 print:left-0 print:overflow-visible`}>
+        <div className={`w-full md:flex-1 bg-gray-200/50 h-full overflow-y-auto flex items-start justify-center p-4 md:p-8 transition-transform duration-300 absolute md:relative ${activeTab === 'preview' ? 'translate-x-0' : 'translate-x-full md:translate-x-0'} print:absolute print:inset-0 print:w-full print:h-auto print:min-h-screen print:bg-white print:z-50 print:overflow-visible print:p-0 print:block`}>
            
            {/* The actual Page */}
            <div 
