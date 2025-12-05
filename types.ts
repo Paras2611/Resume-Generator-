@@ -1,3 +1,4 @@
+
 export interface PersonalInfo {
   fullName: string;
   jobTitle: string;
@@ -56,7 +57,8 @@ export interface ResumeData {
 export enum TemplateType {
   MODERN = 'modern',
   CLASSIC = 'classic',
-  MINIMAL = 'minimal'
+  MINIMAL = 'minimal',
+  ELEGANT = 'elegant'
 }
 
 export const SKILL_LEVELS = ['Beginner', 'Intermediate', 'Advanced', 'Expert'];
