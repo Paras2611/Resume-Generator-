@@ -47,6 +47,7 @@ export interface Project {
 }
 
 export interface ResumeData {
+  experienceLevel: 'fresher' | 'experienced';
   personalInfo: PersonalInfo;
   experience: Experience[];
   education: Education[];

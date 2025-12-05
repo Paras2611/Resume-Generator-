@@ -1,6 +1,8 @@
+
 import { ResumeData } from './types';
 
 export const INITIAL_DATA: ResumeData = {
+  experienceLevel: 'experienced',
   personalInfo: {
     fullName: "Alex Morgan",
     jobTitle: "Senior Frontend Engineer",
